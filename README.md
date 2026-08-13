@@ -27,27 +27,6 @@ It sits behind the Kubernetes Gateway (Porkbun DNS → Cloudflare → K8s Gatewa
 
 ---
 
-## 📡 Core API Controller Endpoints
-
-### Auth Controller (`/api/v1/people/auth`)
-* `POST /api/v1/people/auth/login` - Authenticate user credentials and issue JWT access token
-* `POST /api/v1/people/auth/refresh` - Refresh expired user JWT session token
-* `POST /api/v1/people/auth/logout` - Invalidate active session and logout user
-
-### Member Controller (`/api/v1/people/members`)
-* `POST /api/v1/people/members/register` - Onboard new member profile and trigger account setup
-* `GET /api/v1/people/members/{id}` - Retrieve member profile details by ID
-* `GET /api/v1/people/members/me` - Retrieve authenticated member's own profile summary
-* `PUT /api/v1/people/members/me` - Update authenticated member profile details
-* `PUT /api/v1/people/members/{id}/assign-trainer` - Assign dedicated trainer to a member
-
-### Admin & Trainer Management Controller (`/api/v1/people/staff`)
-* `GET /api/v1/people/staff/trainers` - List all active registered trainers
-* `POST /api/v1/people/staff/trainers/approve/{trainerId}` - Approve pending trainer application
-* `GET /api/v1/people/staff/admins/pending` - List pending admin access requests
-
----
-
 ## ⚙️ Build & Deployment Instructions
 # Standard JVM Run
 ./gradlew bootRun
