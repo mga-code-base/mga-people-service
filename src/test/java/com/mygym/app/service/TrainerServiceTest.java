@@ -54,12 +54,9 @@ class TrainerServiceTest {
     @Test
     @DisplayName("Should return branch details associated with trainer profile")
     void testFindTrainerBranch_Success() {
-        Trainer trainer = new Trainer();
-        trainer.setTrainerId("T-201");
-        trainer.setBranchId("B-10");
+        Trainer trainer = new Trainer(null, "T-201", null, null, null, null, null, null, "B-10", null);
 
-        Branch branch = new Branch();
-        branch.setBranchId("B-10");
+        Branch branch = new Branch(null, "B-10", null, null, null, null, null, null, null);
 
         when(restClient.get()).thenReturn(requestHeadersUriSpec);
         when(requestHeadersUriSpec.uri(eq("/{id}"), eq("T-201"))).thenReturn(requestHeadersSpec);
@@ -74,6 +71,6 @@ class TrainerServiceTest {
         Branch result = trainerService.findTrainerBranch("T-201");
 
         assertNotNull(result);
-        assertEquals("B-10", result.getBranchId());
+        assertEquals("B-10", result.branchId());
     }
 }

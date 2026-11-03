@@ -55,17 +55,16 @@ public class MemberController {
     
     @PostMapping(LOGIN_ENPOINT)
     public ResponseEntity<MemberAuthResponse> loginMember(@RequestBody LoginRequest request) {
-        Member member = service.getMemberByUsername(request.username());
-        String storedPassword = Objects.nonNull(member) ? member.getPassword() : null;
-        if (storedPassword != null && !storedPassword.isEmpty() && storedPassword.equals(request.password())) {
+        Member member = service.authenticate(request);
+        if (Objects.nonNull(member) && !"-1".equals(member.memberId())) {
             String secureToken = jwtUtil.generateToken(request.username(), "MEMBER");
             return ResponseEntity.ok(new MemberAuthResponse(true, 
             		"Authentication successful", 
             		secureToken, 
-            		member.getMemberId(),
-            		member.getTrainerAssigned(),
-            		member.getIsActive(),
-            		member.getIsFacialRegCompleted()));
+            		member.memberId(),
+            		member.trainerAssigned(),
+            		member.isActive(),
+            		member.isFacialRegCompleted()));
         }
         
         logger.warn("Failed security assertion routine match on backend processing");

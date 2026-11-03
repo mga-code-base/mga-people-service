@@ -41,8 +41,7 @@ class AdminServicesTest {
     @Test
     @DisplayName("Should fetch admin details by admin id")
     void testGetAdminById_Success() {
-        Admin admin = new Admin();
-        admin.setAdminId("101");
+        Admin admin = new Admin(null, "101", null, null, null, null, null, null, null);
 
         when(restAdminClient.get()).thenReturn(requestHeadersUriSpec);
         when(requestHeadersUriSpec.uri(eq("/{id}"), eq("101"))).thenReturn(requestHeadersSpec);
@@ -52,14 +51,13 @@ class AdminServicesTest {
         Admin result = adminServices.getAdminById("101");
 
         assertNotNull(result);
-        assertEquals("101", result.getAdminId());
+        assertEquals("101", result.adminId());
     }
 
     @Test
     @DisplayName("Should return primaryAdminCheck 1 when primary admin ID is '0'")
     void testPrimaryAdminCheck_Exists_ReturnsOne() {
-        Admin admin = new Admin();
-        admin.setAdminId("0");
+        Admin admin = new Admin(null, "0", null, null, null, null, null, null, null);
 
         when(restAdminClient.get()).thenReturn(requestHeadersUriSpec);
         when(requestHeadersUriSpec.uri(eq("/{id}"), eq(0))).thenReturn(requestHeadersSpec);

@@ -1,5 +1,6 @@
 package com.mygym.app.service;
 
+import static com.mygym.app.util.PeopleConstants.AUTHENTICATE_ENDPOINT;
 import static com.mygym.app.util.PeopleConstants.ALL_INACTIVE_ENPOINT;
 import static com.mygym.app.util.PeopleConstants.ID_ENPOINT;
 import static com.mygym.app.util.PeopleConstants.MEMBER_GET_BY_TRAINERID;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
+import com.mygym.app.dto.LoginRequest;
 import com.mygym.app.models.Member;
 import com.mygym.app.models.MemberWrapper;
 import com.mygym.app.models.Trainer;
@@ -41,7 +43,7 @@ public class MemberServices {
 
 	public String updateMember(Member member) {
 		String trainerId = restMemberClient.put()
-				.uri(ID_ENPOINT, member.getMemberId())
+				.uri(ID_ENPOINT, member.memberId())
 				.body(member)
 				.retrieve()
 				.body(String.class);
@@ -51,6 +53,14 @@ public class MemberServices {
 	public Member getMemberById(String memberId) {
 		return restMemberClient.get()
 				.uri(ID_ENPOINT, memberId)
+				.retrieve()
+				.body(Member.class);
+	}
+
+	public Member authenticate(LoginRequest request) {
+		return restMemberClient.post()
+				.uri(AUTHENTICATE_ENDPOINT)
+				.body(request)
 				.retrieve()
 				.body(Member.class);
 	}
@@ -70,15 +80,13 @@ public class MemberServices {
 	}
 
 	public MemberWrapper findInactiveMembers(){
-		try {
-			List<Member> members = getAllInactive().getAllMembers().stream().filter(member ->
-			Objects.isNull(member.getMembershipStartDate())
-			&& Objects.isNull(member.getMembershipEndDate()))
-					.toList();
-			return new MemberWrapper(members);
-		} catch (Exception e) {
-			return new MemberWrapper();
+		MemberWrapper inactive = getAllInactive();
+		if (Objects.isNull(inactive)) {
+			return MemberWrapper.empty();
 		}
+		return new MemberWrapper(inactive.allMembers().stream()
+				.filter(member -> Objects.isNull(member.membershipStartDate()) && Objects.isNull(member.membershipEndDate()))
+				.toList());
 	}
 
 	public MemberWrapper findByTrainerId(String trainerId) {
@@ -127,8 +135,7 @@ public class MemberServices {
 							.uri(ID_ENPOINT, trainerId)
 							.retrieve()
 							.body(Trainer.class);
-		if(Objects.nonNull(trainer) && (!trainer.getTrainerId().matches("-1"))
-				&& trainer.getIsActive())
+		if(Objects.nonNull(trainer) && !"-1".equals(trainer.trainerId()) && trainer.isActive())
 			return restMemberClient.put()
 				.uri(uriBuilder -> uriBuilder
 						.path("/trainer/" + memberId)

@@ -47,15 +47,13 @@ public class TrainerController {
     
     @PostMapping(LOGIN_ENPOINT)
     public ResponseEntity<AuthResponse> loginTrainer(@RequestBody LoginRequest request) {
-        Trainer trainer = service.findCredByUsername(request.username());
-        String storedPassword = Objects.nonNull(trainer) ? trainer.getPassword() : null;
-        if (storedPassword != null && !storedPassword.isEmpty() && storedPassword.equals(request.password())
-        		&& trainer.getIsActive()) {
+        Trainer trainer = service.authenticate(request);
+        boolean authenticated = Objects.nonNull(trainer) && !"-1".equals(trainer.trainerId());
+        if (authenticated && trainer.isActive()) {
             String secureToken = jwtUtil.generateToken(request.username(), "TRAINER");
-            return ResponseEntity.ok(new AuthResponse(trainer.getIsActive(), "Authentication successful", 
-            		secureToken, "TRAINER", trainer.getTrainerId(), trainer.getBranchId()));
-        } else if (Objects.nonNull(trainer) && Objects.nonNull(trainer.getIsActive()) 
-        		&& !trainer.getIsActive()) {
+            return ResponseEntity.ok(new AuthResponse(trainer.isActive(), "Authentication successful", 
+            		secureToken, "TRAINER", trainer.trainerId(), trainer.branchId()));
+        } else if (authenticated) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(new AuthResponse(false, "Account Disabled", null, null, null, null));
         }

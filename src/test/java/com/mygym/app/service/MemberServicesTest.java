@@ -39,8 +39,7 @@ class MemberServicesTest {
     @Test
     @DisplayName("Should fetch member details by username")
     void testGetMemberByUsername_Success() {
-        Member member = new Member();
-        member.setUsername("john_doe");
+        Member member = new Member(null, null, null, null, null, null, null, null, null, null, "john_doe", null, null, null, null, null);
 
         when(restMemberClient.get()).thenReturn(requestHeadersUriSpec);
         when(requestHeadersUriSpec.uri(eq("/username/{username}"), eq("john_doe"))).thenReturn(requestHeadersSpec);
@@ -50,13 +49,13 @@ class MemberServicesTest {
         Member result = memberServices.getMemberByUsername("john_doe");
 
         assertNotNull(result);
-        assertEquals("john_doe", result.getUsername());
+        assertEquals("john_doe", result.username());
     }
 
     @Test
     @DisplayName("Should return false when assigning invalid trainer to member")
     void testUpdateTrainerForMember_InvalidTrainer_ReturnsFalse() {
-        Trainer invalidTrainer = new Trainer("-1");
+        Trainer invalidTrainer = Trainer.notFound();
 
         when(restTrainerClient.get()).thenReturn(requestHeadersUriSpec);
         when(requestHeadersUriSpec.uri(eq("/{id}"), eq("T-99"))).thenReturn(requestHeadersSpec);

@@ -47,7 +47,7 @@ public class AdminController {
     
     @PostMapping
     public ResponseEntity<Boolean> create(@RequestBody Admin admin) {
-    	if(service.createAdmin(admin).getAdminId() == "-1")
+    	if("-1".equals(service.createAdmin(admin).adminId()))
     		return ResponseEntity.status(HttpStatus.CONFLICT).body(false);
     	else
     		return ResponseEntity.status(HttpStatus.CREATED).body(true);
@@ -68,17 +68,11 @@ public class AdminController {
 
     @PostMapping(LOGIN_ENPOINT)
     public ResponseEntity<AuthResponse> loginAdmin(@RequestBody LoginRequest request) {        
-        Admin adminDetails = service.findCredByUsername(request.username());
-        String storedPassword = Objects.nonNull(adminDetails) ? adminDetails.getPassword() : null;
-        if (storedPassword != null && !storedPassword.isEmpty() && storedPassword.equals(request.password())) {
-            // Generate standard tamper-proof session token for user tracking
+        Admin adminDetails = service.authenticate(request);
+        if (Objects.nonNull(adminDetails) && Objects.nonNull(adminDetails.adminId())) {
             String secureToken = jwtUtil.generateToken(request.username(), "ADMIN");
-            return ResponseEntity.ok(new AuthResponse(adminDetails.getIsActive(), "Authentication successful", 
-            		secureToken, "ADMIN", adminDetails.getAdminId(), adminDetails.getBranch()));
-        } else if (Objects.nonNull(adminDetails) && Objects.nonNull(adminDetails.getIsActive()) 
-        		&& !adminDetails.getIsActive()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new AuthResponse(false, "Account Disabled", null, null, null, null));
+            return ResponseEntity.ok(new AuthResponse(adminDetails.isActive(), "Authentication successful", 
+            		secureToken, "ADMIN", adminDetails.adminId(), adminDetails.branchId()));
         }
         LOGGER.warn("Failed security assertion routine match on backend processing");
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)

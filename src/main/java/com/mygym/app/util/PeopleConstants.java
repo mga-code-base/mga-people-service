@@ -17,6 +17,8 @@ public class PeopleConstants {
 	public final static String ADMIN_ID_ENDPOINT = "/adminid/{adminid}";
 	
 	public final static String LOGIN_ENPOINT = "/login";
+
+	public final static String AUTHENTICATE_ENDPOINT = "/authenticate";
 	
 	public final static String PRIMARY_ADMIN_EXISTANCE_CHECK_ENDPOINT = "/primaryexists";
 	

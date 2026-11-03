@@ -1,5 +1,6 @@
 package com.mygym.app.service;
 
+import static com.mygym.app.util.PeopleConstants.AUTHENTICATE_ENDPOINT;
 import static com.mygym.app.util.PeopleConstants.ALL_INACTIVE_ENPOINT;
 import static com.mygym.app.util.PeopleConstants.ID_ENPOINT;
 import static com.mygym.app.util.PeopleConstants.TRAINER_DISABLE_STATUS;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.client.RestClient;
 
 import com.mygym.app.models.Branch;
+import com.mygym.app.dto.LoginRequest;
 import com.mygym.app.models.Trainer;
 import com.mygym.app.models.TrainerWrapper;
 
@@ -40,18 +42,17 @@ public class TrainerService {
 
 	public String updateTrainer(Trainer trainer) {
 		String trainerId = restClient.put()
-				.uri(ID_ENPOINT, trainer.getTrainerId())
+				.uri(ID_ENPOINT, trainer.trainerId())
 				.body(trainer)
 				.retrieve()
 				.body(String.class);
 		return trainerId;
 	}
 
-	public Trainer findCredByUsername(String username) {
-		return restClient.get()
-				.uri(uriBuilder -> uriBuilder
-						.queryParam("username", username)
-						.build())
+	public Trainer authenticate(LoginRequest request) {
+		return restClient.post()
+				.uri(AUTHENTICATE_ENDPOINT)
+				.body(request)
 				.retrieve()
 				.body(Trainer.class);
 	}
@@ -79,21 +80,20 @@ public class TrainerService {
 
 	public Branch findTrainerBranch(String trainerId) {
 		Trainer trainer = readById(trainerId);
-		if(Objects.nonNull(trainer) && Objects.nonNull(trainer.getBranchId()))
+		if(Objects.nonNull(trainer) && Objects.nonNull(trainer.branchId()))
 			return restBranchClient.get()
-					.uri(ID_ENPOINT, trainer.getBranchId())
+					.uri(ID_ENPOINT, trainer.branchId())
 					.retrieve()
 					.body(Branch.class);
 		else
-			return new Branch("-1");
+			return Branch.notFound();
 	}
 
 	public TrainerWrapper findInactiveTrainersInBranch(String branchId) {
 		TrainerWrapper trainerWrapper = findInactiveTrainers();
 		return new TrainerWrapper(
-				trainerWrapper.getAllTrainers().stream().filter(trainer -> 
-				Objects.nonNull(trainer.getBranchId()) &&
-				trainer.getBranchId().matches(branchId)).toList()); 
+				trainerWrapper.allTrainers().stream().filter(trainer -> 
+				branchId.equals(trainer.branchId())).toList());
 	}
 
 	public Boolean approveTrainer(String trainerId) {

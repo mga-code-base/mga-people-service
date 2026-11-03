@@ -1,5 +1,6 @@
 package com.mygym.app.service;
 
+import static com.mygym.app.util.PeopleConstants.AUTHENTICATE_ENDPOINT;
 import static com.mygym.app.util.PeopleConstants.ADMIN_ID_ENDPOINT;
 import static com.mygym.app.util.PeopleConstants.ADMIN_REST_CLIENT_BEAN;
 import static com.mygym.app.util.PeopleConstants.APPROVE_ID_PLACEHOLDER_ENDPOINT;
@@ -10,7 +11,6 @@ import static com.mygym.app.util.PeopleConstants.INACTIVE_ADMIN_ENDPOINT;
 import static com.mygym.app.util.PeopleConstants.UPDATE_ADMIN_STATUS_ENDPOINT;
 
 import java.util.List;
-import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
+import com.mygym.app.dto.LoginRequest;
 import com.mygym.app.models.Admin;
 import com.mygym.app.models.AdminWrapper;
 
@@ -38,7 +39,7 @@ public class AdminServices {
 
 	public Boolean isPrimaryAdminActive() {
 		Admin primaryAdmin = getAdminById("0");
-		return primaryAdmin.getAdminId() == "0";
+		return "0".equals(primaryAdmin.adminId());
 	}
 
 	public Boolean createPrimaryAdmin(String password) {
@@ -55,14 +56,10 @@ public class AdminServices {
 	}
 
 	public Admin createAdmin(Admin admin) {
-		Admin newAdmin = restAdminClient.post()
+		return restAdminClient.post()
 				.body(admin)
 				.retrieve()
 				.body(Admin.class);
-		if(!(Objects.nonNull(newAdmin) 
-				&& Objects.nonNull(newAdmin.getAdminId()) 
-				&& newAdmin.getAdminId().equals(Long.valueOf(-1)))); 
-		return newAdmin;
 	}
 	
 	public Admin getAdminById(String adminId) {
@@ -79,8 +76,8 @@ public class AdminServices {
 					.uri(ID_ENPOINT, 0)
 					.retrieve()
 					.body(Admin.class);
-			LOGGER.info("Fetching Primary Admin Details " + admin.getAdminId());
-			if(admin.getAdminId().equals("0"))
+			LOGGER.info("Fetching Primary Admin Details " + admin.adminId());
+			if(admin.adminId().equals("0"))
 				return 1;
 			else
 				return 0;
@@ -99,11 +96,10 @@ public class AdminServices {
 				.body(Admin.class);
 	}
 
-	public Admin findCredByUsername(String username) {
-		return restAdminClient.get()
-	            .uri(uriBuilder -> uriBuilder
-	                    .queryParam("username", username)
-	                    .build())
+	public Admin authenticate(LoginRequest request) {
+		return restAdminClient.post()
+	            .uri(AUTHENTICATE_ENDPOINT)
+	            .body(request)
 	            .retrieve()
 	            .body(Admin.class);
 	}
@@ -113,11 +109,10 @@ public class AdminServices {
 				.uri(INACTIVE_ADMIN_ENDPOINT)
 				.retrieve()
 				.body(AdminWrapper.class);
-       	List<Admin> listOfAdminsWithoutPrimary = admins.getAllAdmins().stream()
-       			.filter(admin -> !(admin.getUsername().matches("admin") 
-       					&& admin.getAdminId().matches("0"))).toList();
-       	admins.setAllAdmins(listOfAdminsWithoutPrimary);
-       	return admins;
+       	List<Admin> listOfAdminsWithoutPrimary = admins.allAdmins().stream()
+       			.filter(admin -> !("admin".equals(admin.username()) && "0".equals(admin.adminId())))
+       			.toList();
+       	return new AdminWrapper(listOfAdminsWithoutPrimary);
     }
     
     public Boolean deleteByAdminId(String adminId) {
