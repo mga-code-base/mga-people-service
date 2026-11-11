@@ -2,13 +2,7 @@ package com.mygym.app.util;
 
 public class PeopleConstants {
 
-	public final static String CONTENT_TYPE = "Content-Type";
-	
-	public final static String APP_JSON = "application/json";
-
-	public final static String DEV_ADMIN_BASE_URL = "http://mga-people-crud-service/crud/admins";
-	
-	public final static String PRD_ADMIN_BASE_URL = "http://mga-people-crud-service.default.svc.cluster.local:80/crud/admins";
+	public static final String ADMIN_CRUD_PATH = "/crud/admins";
 	
 	public static final String ADMIN_REQUEST_MAPPING = "/api/admins";
 	
@@ -28,9 +22,7 @@ public class PeopleConstants {
 	
 	public final static String UPDATE_ADMIN_STATUS_ENDPOINT = "/updatestatus/{id}";
 	
-	public final static String DEV_TRAINER_BASE_URL = "http://mga-people-crud-service/crud/trainers";
-	
-	public final static String PRD_TRAINER_BASE_URL = "http://mga-people-crud-service.default.svc.cluster.local:80/crud/trainers";
+	public static final String TRAINER_CRUD_PATH = "/crud/trainers";
 	
 	public static final String TRAINER_REQUEST_MAPPING = "/api/trainers";
 	
@@ -44,9 +36,7 @@ public class PeopleConstants {
 	
 	public static final String MEMBER_REQUEST_MAPPING = "/api/members";
 	
-	public final static String DEV_MEMBER_BASE_URL = "http://mga-people-crud-service/crud/members";
-	
-	public final static String PRD_MEMBER_BASE_URL = "http://mga-people-crud-service.default.svc.cluster.local:80/crud/members";
+	public static final String MEMBER_CRUD_PATH = "/crud/members";
 	
 	public final static String MEMBER_UPDATE_ENDDATE_BY_ID = "/enddate/{id}";
 	
@@ -60,23 +50,17 @@ public class PeopleConstants {
 	
 	public final static String MEMBER_UPDATE_APPROVAL = "/approve/{id}";
 	
-	public final static String DEV_RECORDS_BASE_URL = "http://mga-records-crud-service/crud/my-records";
-	
-	public final static String PRD_RECORDS_BASE_URL = "http://mga-records-crud-service.default.svc.cluster.local:80/crud/my-records";
+	public static final String RECORDS_CRUD_PATH = "/crud/my-records";
 	
 	public static final String RECORDS_REQUEST_MAPPING = "/api/admins";
 	
 	public static final String RECORDS_GET_PREVIOUS = "/previous";
 	
-	public final static String DEV_BRANCH_BASE_URL = "http://mga-resource-crud-service/crud/branches";
-	
-	public final static String PRD_BRANCH_BASE_URL = "http://mga-resource-crud-service.default.svc.cluster.local:80/crud/branches";
+	public static final String BRANCH_CRUD_PATH = "/crud/branches";
 	
 	public static final String APPROVE_ID_PLACEHOLDER_ENDPOINT = "/approve/{id}";
 	
-	public final static String DEV_WORKOUT_BASE_URL = "http://mga-records-crud-service/crud/workouts";
-	
-	public final static String PRD_WORKOUT_BASE_URL = "http://mga-records-crud-service.default.svc.cluster.local:80/crud/workouts";
+	public static final String WORKOUT_CRUD_PATH = "/crud/workouts";
 
 	public static final String MEMBER_REST_CLIENT_BEAN = "memberCrudClient";
 	

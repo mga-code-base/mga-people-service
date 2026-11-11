@@ -11,10 +11,14 @@ import static com.mygym.app.util.PeopleConstants.USERNAME_PLACEHOLDER_ENDPOINT;
 
 import java.util.Objects;
 
+import jakarta.validation.Valid;
+import jakarta.validation.groups.Default;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,6 +35,7 @@ import com.mygym.app.models.Trainer;
 import com.mygym.app.models.TrainerWrapper;
 import com.mygym.app.security.JwtUtil;
 import com.mygym.app.service.TrainerService;
+import com.mygym.app.validation.OnCreate;
 
 @RestController
 @RequestMapping(TRAINER_REQUEST_MAPPING)
@@ -46,7 +51,7 @@ public class TrainerController {
     }
     
     @PostMapping(LOGIN_ENPOINT)
-    public ResponseEntity<AuthResponse> loginTrainer(@RequestBody LoginRequest request) {
+    public ResponseEntity<AuthResponse> loginTrainer(@Valid @RequestBody LoginRequest request) {
         Trainer trainer = service.authenticate(request);
         boolean authenticated = Objects.nonNull(trainer) && !"-1".equals(trainer.trainerId());
         if (authenticated && trainer.isActive()) {
@@ -63,7 +68,7 @@ public class TrainerController {
     }
     
     @PostMapping
-    public String create(@RequestBody Trainer trainer) {
+    public String create(@Validated({Default.class, OnCreate.class}) @RequestBody Trainer trainer) {
         return service.createTrainer(trainer);
     }
     

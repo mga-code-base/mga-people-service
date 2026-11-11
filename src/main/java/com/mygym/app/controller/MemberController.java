@@ -13,10 +13,14 @@ import static com.mygym.app.util.PeopleConstants.USERNAME_PLACEHOLDER_ENDPOINT;
 
 import java.util.Objects;
 
+import jakarta.validation.Valid;
+import jakarta.validation.groups.Default;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,6 +37,7 @@ import com.mygym.app.models.Member;
 import com.mygym.app.models.MemberWrapper;
 import com.mygym.app.security.JwtUtil;
 import com.mygym.app.service.MemberServices;
+import com.mygym.app.validation.OnCreate;
 
 @RestController
 @RequestMapping(MEMBER_REQUEST_MAPPING)
@@ -49,12 +54,12 @@ public class MemberController {
     }
     
     @PostMapping
-    public ResponseEntity<String> create(@RequestBody Member member) {
+    public ResponseEntity<String> create(@Validated({Default.class, OnCreate.class}) @RequestBody Member member) {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.createMember(member));
     }
     
     @PostMapping(LOGIN_ENPOINT)
-    public ResponseEntity<MemberAuthResponse> loginMember(@RequestBody LoginRequest request) {
+    public ResponseEntity<MemberAuthResponse> loginMember(@Valid @RequestBody LoginRequest request) {
         Member member = service.authenticate(request);
         if (Objects.nonNull(member) && !"-1".equals(member.memberId())) {
             String secureToken = jwtUtil.generateToken(request.username(), "MEMBER");
@@ -75,7 +80,7 @@ public class MemberController {
     }
     
     @PutMapping
-    public String updateMember(Member member) {
+    public String updateMember(@Valid @RequestBody Member member) {
     	return service.updateMember(member);
     }
     

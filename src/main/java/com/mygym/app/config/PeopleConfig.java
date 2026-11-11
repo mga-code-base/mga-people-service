@@ -1,98 +1,74 @@
 package com.mygym.app.config;
 
-import static com.mygym.app.util.PeopleConstants.DEV_ADMIN_BASE_URL;
-import static com.mygym.app.util.PeopleConstants.DEV_TRAINER_BASE_URL;
-import static com.mygym.app.util.PeopleConstants.DEV_MEMBER_BASE_URL;
-import static com.mygym.app.util.PeopleConstants.DEV_RECORDS_BASE_URL;
-import static com.mygym.app.util.PeopleConstants.DEV_WORKOUT_BASE_URL;
-import static com.mygym.app.util.PeopleConstants.DEV_BRANCH_BASE_URL;
-import static com.mygym.app.util.PeopleConstants.PRD_ADMIN_BASE_URL;
-import static com.mygym.app.util.PeopleConstants.PRD_TRAINER_BASE_URL;
-import static com.mygym.app.util.PeopleConstants.PRD_MEMBER_BASE_URL;
-import static com.mygym.app.util.PeopleConstants.PRD_RECORDS_BASE_URL;
-import static com.mygym.app.util.PeopleConstants.PRD_WORKOUT_BASE_URL;
-import static com.mygym.app.util.PeopleConstants.PRD_BRANCH_BASE_URL;
-import static com.mygym.app.util.PeopleConstants.CONTENT_TYPE;
-import static com.mygym.app.util.PeopleConstants.APP_JSON;
-import static com.mygym.app.util.PeopleConstants.MEMBER_REST_CLIENT_BEAN;
+import static com.mygym.app.util.PeopleConstants.ADMIN_CRUD_PATH;
 import static com.mygym.app.util.PeopleConstants.ADMIN_REST_CLIENT_BEAN;
-import static com.mygym.app.util.PeopleConstants.TRAINER_REST_CLIENT_BEAN;
-import static com.mygym.app.util.PeopleConstants.RECORDS_REST_CLIENT_BEAN;
-import static com.mygym.app.util.PeopleConstants.WORKOUT_REST_CLIENT_BEAN;
+import static com.mygym.app.util.PeopleConstants.BRANCH_CRUD_PATH;
 import static com.mygym.app.util.PeopleConstants.BRANCH_REST_CLIENT_BEAN;
+import static com.mygym.app.util.PeopleConstants.MEMBER_CRUD_PATH;
+import static com.mygym.app.util.PeopleConstants.MEMBER_REST_CLIENT_BEAN;
+import static com.mygym.app.util.PeopleConstants.RECORDS_CRUD_PATH;
+import static com.mygym.app.util.PeopleConstants.RECORDS_REST_CLIENT_BEAN;
+import static com.mygym.app.util.PeopleConstants.TRAINER_CRUD_PATH;
+import static com.mygym.app.util.PeopleConstants.TRAINER_REST_CLIENT_BEAN;
+import static com.mygym.app.util.PeopleConstants.WORKOUT_CRUD_PATH;
+import static com.mygym.app.util.PeopleConstants.WORKOUT_REST_CLIENT_BEAN;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestClient;
 
+import com.mygym.app.client.DownstreamClients;
+
 @Configuration
 public class PeopleConfig {
-	
-	 private static final Logger LOGGER = LoggerFactory.getLogger(PeopleConfig.class);
 
-    @Value("${app.environment}")
-    private String env;
+    private static final String PEOPLE_CRUD = "people-crud";
+    private static final String RECORDS_CRUD = "records-crud";
+    private static final String RESOURCE_CRUD = "resource-crud";
+
+    private final DownstreamClients clients;
+    private final String peopleCrudUrl;
+    private final String recordsCrudUrl;
+    private final String resourceCrudUrl;
+
+    public PeopleConfig(DownstreamClients clients,
+            @Value("${mga.clients.people-crud-url}") String peopleCrudUrl,
+            @Value("${mga.clients.records-crud-url}") String recordsCrudUrl,
+            @Value("${mga.clients.resource-crud-url}") String resourceCrudUrl) {
+        this.clients = clients;
+        this.peopleCrudUrl = peopleCrudUrl;
+        this.recordsCrudUrl = recordsCrudUrl;
+        this.resourceCrudUrl = resourceCrudUrl;
+    }
 
     @Bean(name = ADMIN_REST_CLIENT_BEAN)
     public RestClient restAdminClient() {
-    	String baseUrl = env.contentEquals("DEV") ? DEV_ADMIN_BASE_URL : PRD_ADMIN_BASE_URL;
-    	LOGGER.info("⚙️ Base URL set for Admin CRUD : " + baseUrl);
-        return RestClient.builder()
-                .baseUrl(baseUrl)
-                .defaultHeader(CONTENT_TYPE, APP_JSON)
-                .build();
+        return clients.create(PEOPLE_CRUD, peopleCrudUrl + ADMIN_CRUD_PATH);
     }
-    
+
     @Bean(name = TRAINER_REST_CLIENT_BEAN)
     public RestClient restTrainerClient() {
-    	String baseUrl = env.contentEquals("DEV") ? DEV_TRAINER_BASE_URL : PRD_TRAINER_BASE_URL;
-    	LOGGER.info("⚙️ Base URL set for Trainer CRUD : " + baseUrl);
-        return RestClient.builder()
-                .baseUrl(baseUrl)
-                .defaultHeader(CONTENT_TYPE, APP_JSON)
-                .build();
+        return clients.create(PEOPLE_CRUD, peopleCrudUrl + TRAINER_CRUD_PATH);
     }
-    
+
     @Bean(name = MEMBER_REST_CLIENT_BEAN)
     public RestClient restCrudClient() {
-    	String baseUrl = env.contentEquals("DEV") ? DEV_MEMBER_BASE_URL : PRD_MEMBER_BASE_URL;
-    	LOGGER.info("⚙️ Base URL set for Member CRUD : " + baseUrl);
-        return RestClient.builder()
-                .baseUrl(baseUrl)
-                .defaultHeader(CONTENT_TYPE, APP_JSON)
-                .build();
+        return clients.create(PEOPLE_CRUD, peopleCrudUrl + MEMBER_CRUD_PATH);
     }
-    
+
     @Bean(name = RECORDS_REST_CLIENT_BEAN)
     public RestClient recordsCrudClient() {
-    	String baseUrl = env.contentEquals("DEV") ? DEV_RECORDS_BASE_URL : PRD_RECORDS_BASE_URL;
-    	LOGGER.info("⚙️ Base URL set for Records CRUD : " + baseUrl);
-    	return RestClient.builder()
-                .baseUrl(baseUrl)
-                .defaultHeader(CONTENT_TYPE, APP_JSON)
-                .build();
+        return clients.create(RECORDS_CRUD, recordsCrudUrl + RECORDS_CRUD_PATH);
     }
-    
+
     @Bean(name = WORKOUT_REST_CLIENT_BEAN)
     public RestClient workoutCrudClient() {
-    	String baseUrl = env.contentEquals("DEV") ? DEV_WORKOUT_BASE_URL : PRD_WORKOUT_BASE_URL;
-    	LOGGER.info("⚙️ Base URL set for Workout CRUD : " + baseUrl);
-    	return RestClient.builder()
-                .baseUrl(baseUrl)
-                .defaultHeader(CONTENT_TYPE, APP_JSON)
-                .build();
+        return clients.create(RECORDS_CRUD, recordsCrudUrl + WORKOUT_CRUD_PATH);
     }
-    
+
     @Bean(name = BRANCH_REST_CLIENT_BEAN)
     public RestClient branchCrudClient() {
-    	String baseUrl = env.contentEquals("DEV") ? DEV_BRANCH_BASE_URL : PRD_BRANCH_BASE_URL;
-    	LOGGER.info("⚙️ Base URL set for Branch CRUD : " + baseUrl);
-    	return RestClient.builder()
-                .baseUrl(baseUrl)
-                .defaultHeader(CONTENT_TYPE, APP_JSON)
-                .build();
+        return clients.create(RESOURCE_CRUD, resourceCrudUrl + BRANCH_CRUD_PATH);
     }
 }

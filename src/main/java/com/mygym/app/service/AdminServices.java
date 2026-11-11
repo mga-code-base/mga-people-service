@@ -43,9 +43,7 @@ public class AdminServices {
 	}
 
 	public Boolean createPrimaryAdmin(String password) {
-		
-		LOGGER.info("⚙️ Base URL set for Admin CRUD : " + restAdminClient.get()
-	    .uri("").exchange((request, response) -> request.getURI().toString()));
+
 		return restAdminClient.post()
 	            .uri(uriBuilder -> uriBuilder
 	                    .path(CREATE_PRIMARY_ADMIN_ENDPOINT)
