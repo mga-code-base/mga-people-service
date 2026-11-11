@@ -4,7 +4,7 @@ public class PeopleConstants {
 
 	public static final String ADMIN_CRUD_PATH = "/crud/admins";
 	
-	public static final String ADMIN_REQUEST_MAPPING = "/api/admins";
+	public static final String ADMIN_REQUEST_MAPPING = "/api/v1/admins";
 	
 	public final static String ID_ENPOINT = "/{id}";
 	
@@ -24,7 +24,7 @@ public class PeopleConstants {
 	
 	public static final String TRAINER_CRUD_PATH = "/crud/trainers";
 	
-	public static final String TRAINER_REQUEST_MAPPING = "/api/trainers";
+	public static final String TRAINER_REQUEST_MAPPING = "/api/v1/trainers";
 	
 	public static final String TRAINER_GET_BRANCH__BY_ID = "/branchdetails/{trainerid}";
 	
@@ -34,7 +34,7 @@ public class PeopleConstants {
 	
 	public final static String ALL_INACTIVE_ENPOINT = "/allinactive";
 	
-	public static final String MEMBER_REQUEST_MAPPING = "/api/members";
+	public static final String MEMBER_REQUEST_MAPPING = "/api/v1/members";
 	
 	public static final String MEMBER_CRUD_PATH = "/crud/members";
 	
@@ -52,7 +52,7 @@ public class PeopleConstants {
 	
 	public static final String RECORDS_CRUD_PATH = "/crud/my-records";
 	
-	public static final String RECORDS_REQUEST_MAPPING = "/api/admins";
+	public static final String RECORDS_REQUEST_MAPPING = "/api/v1/admins";
 	
 	public static final String RECORDS_GET_PREVIOUS = "/previous";
 	
