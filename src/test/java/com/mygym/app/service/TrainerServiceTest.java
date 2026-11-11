@@ -2,10 +2,10 @@ package com.mygym.app.service;
 
 import com.mygym.app.models.Branch;
 import com.mygym.app.models.Trainer;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.client.RestClient;
@@ -35,8 +35,12 @@ class TrainerServiceTest {
     @Mock
     private RestClient.ResponseSpec responseSpec;
 
-    @InjectMocks
     private TrainerService trainerService;
+
+    @BeforeEach
+    void setUp() {
+        trainerService = new TrainerService(restClient, restBranchClient);
+    }
 
     @Test
     @DisplayName("Should approve trainer status downstream")

@@ -3,10 +3,10 @@ package com.mygym.app.service;
 import com.mygym.app.models.Member;
 import com.mygym.app.models.MemberWrapper;
 import com.mygym.app.models.Trainer;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.client.RestClient;
@@ -33,8 +33,12 @@ class MemberServicesTest {
     @Mock
     private RestClient.ResponseSpec responseSpec;
 
-    @InjectMocks
     private MemberServices memberServices;
+
+    @BeforeEach
+    void setUp() {
+        memberServices = new MemberServices(restMemberClient, restTrainerClient);
+    }
 
     @Test
     @DisplayName("Should fetch member details by username")

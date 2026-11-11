@@ -2,10 +2,10 @@ package com.mygym.app.service;
 
 import com.mygym.app.models.Admin;
 import com.mygym.app.models.AdminWrapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -35,8 +35,12 @@ class AdminServicesTest {
     @Mock
     private org.springframework.web.client.RestClient.ResponseSpec responseSpec;
 
-    @InjectMocks
     private AdminServices adminServices;
+
+    @BeforeEach
+    void setUp() {
+        adminServices = new AdminServices(restAdminClient, restBranchClient);
+    }
 
     @Test
     @DisplayName("Should fetch admin details by admin id")
